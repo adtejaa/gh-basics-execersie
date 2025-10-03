@@ -1,23 +1,44 @@
 name: flow-1
+
 on:
-#   pull_request:
-#     types: [opened, synchronize, reopened]
-#     branches:
-#         - main
-#         - develop
-#         - 'feature/*'
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main ]
     paths-ignore:
       - '.github/workflows/**'
-  workflow_dispatch: # <-- Allows manual workflow runs from the Actions tab
 
 jobs:
   run-api:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Run a one-line script
-        run: echo "Hello, GitHub Actions! -- will be triggered on push to main branchss"
+        uses: actions/checkout@v4
+
+      - name: Do something and produce an artifact
+        run: |
+          echo "Hello, GitHub Actions! (from $(date -u))" > hello.txt
+          mkdir -p out && mv hello.txt out/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-artifact                # logical name you’ll see in UI
+          path: out/                          # file or folder
+          retention-days: 7                   # keep it simple; defaults are org-level
+          if-no-files-found: error            # fail if you messed up the path
+
+  consume-artifact:
+    needs: run-api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hello-artifact                # must match upload name
+          path: ./fetched
+
+      - name: Show contents
+        run: |
+          ls -la ./fetched
+          echo "File content:"
+          cat ./fetched/hello.txt
