@@ -8,9 +8,10 @@ on:
 #         - 'feature/*'
   push:
     branches:
-        - main
+      - main
     paths-ignore:
       - '.github/workflows/**'
+  workflow_dispatch: # <-- Allows manual workflow runs from the Actions tab
 
 jobs:
   run-api:
@@ -19,4 +20,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Run a one-line script
-        run: echo "Hello, GitHub Actions! -- will be triggered on push to main branch" 
+        run: echo "Hello, GitHub Actions! -- will be triggered on push to main branchss"
