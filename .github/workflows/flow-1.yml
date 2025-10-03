@@ -1,11 +1,16 @@
 name: flow-1
 on:
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+#     branches:
+#         - main
+#         - develop
+#         - 'feature/*'
   push:
     branches:
-      - main
-#   pull_request:
-#     branches:
-#       - main
+        - main
+    paths-ignore:
+      - '.github/workflows/**'
 
 jobs:
   run-api:
