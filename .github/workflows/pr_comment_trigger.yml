@@ -1,0 +1,16 @@
+name: PR‑Comment Trigger
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  run-on-comment:
+    if: |
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, '/run-tests')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: ./check_java.sh
