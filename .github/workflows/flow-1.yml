@@ -18,7 +18,7 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ secrets.USERNAME }}   # your repo/Org secret
         run: |
-          if [ -z "${GITHUB_USERNAME:-}" ]; then
+          if [ -z "${GITHUB_USERNAME}" ]; then
             echo " Secret USERNAME is missing or not available to this event."
             exit 1
           fi
