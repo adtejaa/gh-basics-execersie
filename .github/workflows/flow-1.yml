@@ -14,31 +14,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Do something and produce an artifact
+      - name: Fetch + validate secret
+        env:
+          GITHUB_USERNAME: ${{ secrets.USERNAME }}   # your repo/Org secret
         run: |
-          echo "Hello, GitHub Actions! (from $(date -u))" > hello.txt
-          mkdir -p out && mv hello.txt out/
+          if [ -z "${GITHUB_USERNAME:-}" ]; then
+            echo " Secret USERNAME is missing or not available to this event."
+            exit 1
+          fi
+          echo "Secret present (length: ${#GITHUB_USERNAME})"   # value will be masked if echoed
+
+      - name: Produce artifact
+        run: |
+          mkdir -p out
+          printf "Hello from %s\n" "$(date -u +'%Y-%m-%d %H:%M:%S UTC')" > out/hello.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hello-artifact                # logical name you’ll see in UI
-          path: out/                          # file or folder
-          retention-days: 7                   # keep it simple; defaults are org-level
-          if-no-files-found: error            # fail if you messed up the path
+          name: hello-artifact
+          path: out/
+          if-no-files-found: error     # change to warn/ignore if you don’t want failure
+          retention-days: 7
 
-  consume-artifact:
-    needs: run-api
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: hello-artifact                # must match upload name
-          path: ./fetched
 
-      - name: Show contents
-        run: |
-          ls -la ./fetched
-          echo "File content:"
-          cat ./fetched/hello.txt
