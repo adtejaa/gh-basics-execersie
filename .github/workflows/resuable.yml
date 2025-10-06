@@ -1,0 +1,9 @@
+name: First Action
+on: workflow_call
+
+jobs:
+  list-computers-shell-1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: runn reusable
+        run: ls -lah
