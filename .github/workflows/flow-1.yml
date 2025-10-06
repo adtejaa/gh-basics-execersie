@@ -8,36 +8,22 @@ on:
       - '.github/workflows/**'
 
 jobs:
-  run-api:
+  validate-secret:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Fetch + validate secret
         env:
-          GITHUB_USERNAME: ${{ secrets.USERNAME }}   # your repo/Org secret
+          GITHUB_USERNAME: ${{ secrets.USERNAME }}   # must exist in repo/org secrets
         run: |
-          if [ -z "${GITHUB_USERNAME}" ]; then
-            echo " Secret USERNAME is missing or not available to this event."
+          if [ -z "${GITHUB_USERNAME:-}" ]; then
+            echo "Secret USERNAME is missing or not available to this event."
             exit 1
           fi
-          echo "Secret present (length: ${#GITHUB_USERNAME})"   # value will be masked if echoed
+          echo "Secret present (length: ${#GITHUB_USERNAME})"   # value will be masked as ***
 
-      - name: calling reusable
-        uses: ./.github/workflows/resuable.yml
-
-      # - name: Produce artifact
-      #   run: |
-      #     mkdir -p out
-      #     printf "Hello from %s\n" "$(date -u +'%Y-%m-%d %H:%M:%S UTC')" > out/hello.txt
-
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: hello-artifact
-      #     path: out/
-      #     if-no-files-found: error     # change to warn/ignore if you don’t want failure
-      #     retention-days: 7
-
-
+  deploy:
+    needs: validate-secret
+    uses: ./.github/workflows/reusable.yml   # calling a reusable workflow (job-level 'uses')
+    secrets: inherit                          # pass all calling-job secrets to the reusable workflow
+    # with:
+    #   some_input: "value"                   # if your reusable workflow defines inputs
