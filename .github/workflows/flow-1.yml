@@ -23,7 +23,7 @@ jobs:
 
   deploy:
     needs: validate-secret
-    uses: ./.github/workflows/reusable.yml   # calling a reusable workflow (job-level 'uses')
+    uses: ./.github/workflows/resuable.yml   # calling a reusable workflow (job-level 'uses')
     secrets: inherit                          # pass all calling-job secrets to the reusable workflow
     # with:
     #   some_input: "value"                   # if your reusable workflow defines inputs
