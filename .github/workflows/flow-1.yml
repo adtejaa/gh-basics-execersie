@@ -24,17 +24,20 @@ jobs:
           fi
           echo "Secret present (length: ${#GITHUB_USERNAME})"   # value will be masked if echoed
 
-      - name: Produce artifact
-        run: |
-          mkdir -p out
-          printf "Hello from %s\n" "$(date -u +'%Y-%m-%d %H:%M:%S UTC')" > out/hello.txt
+      - name: calling reusable
+        uses: ./.github/workflows/resuable.yml
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hello-artifact
-          path: out/
-          if-no-files-found: error     # change to warn/ignore if you don’t want failure
-          retention-days: 7
+      # - name: Produce artifact
+      #   run: |
+      #     mkdir -p out
+      #     printf "Hello from %s\n" "$(date -u +'%Y-%m-%d %H:%M:%S UTC')" > out/hello.txt
+
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: hello-artifact
+      #     path: out/
+      #     if-no-files-found: error     # change to warn/ignore if you don’t want failure
+      #     retention-days: 7
 
 
